@@ -23,6 +23,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    def keystoreProperties = new Properties()
+    keystoreProperties.load(new FileInputStream(rootProject.file("keys.properties")))
+    buildTypes.each {
+        it.buildConfigField 'String', 'API_ENDPOINT', keystoreProperties['baseUrl']
+        it.buildConfigField 'String', 'API_KEY', keystoreProperties['apiKey']
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
