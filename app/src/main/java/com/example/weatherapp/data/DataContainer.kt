@@ -2,6 +2,8 @@ package com.example.weatherapp.data
 
 import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.data.interceptor.ApiKeyInterceptor
+import com.example.weatherapp.data.interceptor.LangInterceptor
+import com.example.weatherapp.data.interceptor.UnitsInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -25,6 +27,8 @@ object DataContainer {
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(ApiKeyInterceptor())
+            .addInterceptor(LangInterceptor())
+            .addInterceptor(UnitsInterceptor())
             .connectTimeout(10L, TimeUnit.SECONDS)
             .build()
     }

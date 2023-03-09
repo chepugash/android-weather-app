@@ -48,12 +48,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 showLoading(true)
                 api.getWeather(query).also {
                     parentFragmentManager.beginTransaction()
-                        .setCustomAnimations(
-                            android.R.anim.fade_in,
-                            android.R.anim.fade_out,
-                            android.R.anim.fade_in,
-                            android.R.anim.fade_out,
-                        )
                         .replace(R.id.container, DetailFragment.newInstance(it.id))
                         .addToBackStack("Main")
                         .commit()

@@ -8,12 +8,16 @@ interface WeatherApi {
 
     @GET("weather")
     suspend fun getWeather(
-        @Query("q") city: String,
-        @Query("units") units: String = "metric",
+        @Query("q") city: String
     ): WeatherResponse
 
     suspend fun getWeather(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
+    ): WeatherResponse
+
+    @GET("weather")
+    suspend fun getWeather(
+        @Query("id") city: Int
     ): WeatherResponse
 }
