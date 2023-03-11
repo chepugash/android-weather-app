@@ -11,7 +11,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 private const val BASE_URL = BuildConfig.API_ENDPOINT
-const val API_KEY = BuildConfig.API_KEY
 
 object DataContainer {
 
