@@ -4,9 +4,11 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.view.View
+import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.SearchView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,6 +21,7 @@ import com.example.weatherapp.data.response.City
 import com.example.weatherapp.databinding.FragmentMainBinding
 import com.example.weatherapp.utils.hideKeyboard
 import com.example.weatherapp.utils.showSnackbar
+import com.google.android.gms.common.api.Api.ApiOptions.HasOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
@@ -52,29 +55,53 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu, menu)
+
+        val menuItem = menu.findItem(R.id.action_search)
+        val searchView = menuItem.actionView as androidx.appcompat.widget.SearchView
+
+        searchView.queryHint = "Найти город"
+
+        searchView.setOnQueryTextListener(
+            object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    loadCity(query)
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean = false
+
+        })
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val actionBar = (activity as AppCompatActivity?)?.supportActionBar
+        actionBar?.title = "Найти город"
+        setHasOptionsMenu(true)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMainBinding.bind(view)
-        binding?.run {
-            btnFind.setOnClickListener {
-                onLoadClick()
-            }
-            etCity.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    onLoadClick()
-                }
-                true
-            }
-        }
         loadNearestCities()
     }
 
     private fun loadNearestCities() {
         if (context?.let {
-            ActivityCompat.checkSelfPermission(
-                it,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
             } == PackageManager.PERMISSION_DENIED) {
             requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         } else {
@@ -90,6 +117,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 } else {
                     activity?.findViewById<View>(android.R.id.content)
                         ?.showSnackbar("Not found")
+                    createRecyclerView()
                 }
             }
         }
@@ -141,13 +169,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
-    private fun onLoadClick() {
-        binding?.run {
-            etCity.hideKeyboard()
-            loadCity(etCity.text.toString())
-        }
-    }
-
     private fun showLoading(isShow: Boolean) {
         binding?.progress?.isVisible = isShow
     }
@@ -156,5 +177,4 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         activity?.findViewById<View>(android.R.id.content)
             ?.showSnackbar(error.message ?: "Error")
     }
-
 }

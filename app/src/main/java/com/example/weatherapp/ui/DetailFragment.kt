@@ -2,7 +2,10 @@ package com.example.weatherapp.ui
 
 import android.opengl.Visibility
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +17,18 @@ import com.example.weatherapp.utils.showSnackbar
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+private const val NE_START = 23
+private const val E_START = 68
+private const val SE_START = 113
+private const val S_START = 158
+private const val WS_START = 203
+private const val W_START = 248
+private const val NW_START = 293
+private const val N_START = 337
+private const val N_END = 360
+
+private const val PRESSURE_FORMULA = 1.333
+
 class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private var binding: FragmentDetailBinding? = null
@@ -23,6 +38,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentDetailBinding.bind(view)
+        (activity as AppCompatActivity?)?.supportActionBar?.title = ""
 
         val id = arguments?.getInt(ARG_NAME)
 
@@ -31,11 +47,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                 loadWeather(id)
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
     }
 
     private fun loadWeather(query: Int) {
@@ -47,9 +58,11 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                     showTemp(it.main.temp)
                     showHumidity(it.main.humidity)
                     showWind(it.wind.speed, convertWind(it.wind.deg))
+                    showPressure(it.main.pressure)
                     it.weather.firstOrNull()?.also {
                         showWeatherIcon(it.icon)
                     }
+                    (activity as AppCompatActivity?)?.supportActionBar?.title = it.name
                 }
             } catch (error: Throwable) {
                 showError(error)
@@ -75,9 +88,18 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         }
     }
 
+    private fun showPressure(pressure: Int) {
+        binding?.run {
+            tvPressure.text = "${castMbarToMm(pressure)} мм.рт.ст"
+            ivPressure.isVisible = true
+        }
+    }
+
+    private fun castMbarToMm(pressure: Int): Int = (pressure / PRESSURE_FORMULA).toInt()
+
     private fun showTemp(temp: Double) {
         binding?.run {
-            tvTemp.text = "$temp C"
+            tvTemp.text = "$temp°C"
             ivTemp.isVisible = true
         }
     }
@@ -104,15 +126,15 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private fun convertWind(wind: Int): String {
         return when (wind) {
-            in 0..22 -> "С"
-            in 23..67 -> "СВ"
-            in 68..112 -> "В"
-            in 113..157 -> "ЮВ"
-            in 158..202 -> "Ю"
-            in 203..247 -> "ЮЗ"
-            in 248..292 -> "З"
-            in 293..337 -> "СЗ"
-            in 337..360 -> "С"
+            in 0..NE_START -> "С"
+            in NE_START..E_START -> "СВ"
+            in E_START..SE_START -> "В"
+            in SE_START..S_START -> "ЮВ"
+            in S_START..WS_START -> "Ю"
+            in WS_START..W_START -> "ЮЗ"
+            in W_START..NW_START -> "З"
+            in NW_START..N_START -> "СЗ"
+            in N_START..N_END -> "С"
             else -> "Не определено"
         }
     }
