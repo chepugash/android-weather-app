@@ -69,7 +69,9 @@ object DataContainer {
     val geoLocationUseCase: GetGeoLocationUseCase
         get() = GetGeoLocationUseCase(geoLocationRepository)
 
-    private val geoLocationRepository = GeoLocationRepositoryImpl(geoLocationDataSource)
+    private var geoLocationDataSource: GeoLocationDataSource? = null
+
+    private var geoLocationRepository = GeoLocationRepositoryImpl(geoLocationDataSource)
 
     private var locationClient: FusedLocationProviderClient? = null
 
@@ -77,11 +79,11 @@ object DataContainer {
         applicationContext: Context
     ) {
         locationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
-    }
-
-    @Suppress("TooGenericExceptionThrown")
-    private val geoLocationDataSource: GeoLocationDataSource
-        get() = GeoLocationDataSource(
+        geoLocationDataSource = GeoLocationDataSource(
             locationClient ?: throw Exception("locationClient not provided")
         )
+        geoLocationRepository = GeoLocationRepositoryImpl(geoLocationDataSource)
+    }
+
+
 }

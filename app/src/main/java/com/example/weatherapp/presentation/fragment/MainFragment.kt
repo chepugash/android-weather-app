@@ -48,10 +48,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     ) { isGranted ->
         if (isGranted) {
             showSnackbar("Granted")
-            loadNearestCities()
+            viewModel.loadNearestCities(isGranted = true)
         } else {
             showSnackbar("Not granted")
-            viewModel.loadNearestCities()
+            viewModel.loadNearestCities(isGranted = false)
         }
     }
 
@@ -135,9 +135,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             } == PackageManager.PERMISSION_DENIED) {
             requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         } else {
-            mFusedLocationClient = LocationServices
-                .getFusedLocationProviderClient(requireActivity())
-            viewModel.loadNearestCities()
+            viewModel.loadNearestCities(isGranted = true)
         }
     }
 

@@ -5,5 +5,5 @@ import com.google.android.gms.location.FusedLocationProviderClient
 
 interface GeoLocationRepository {
 
-    suspend fun getGeoLocation(client: FusedLocationProviderClient): GeoLocationInfo
+    suspend fun getGeoLocation(): GeoLocationInfo?
 }

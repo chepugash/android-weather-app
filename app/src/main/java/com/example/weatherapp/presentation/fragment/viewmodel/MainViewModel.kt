@@ -90,6 +90,26 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun loadNearestCities(isGranted: Boolean) {
+        viewModelScope.launch {
+            try {
+                if (isGranted) {
+                    val location = getGeoLocationUseCase()
+                    if (location == null) {
+                        getCities()
+                    } else {
+                        getCities(location.lat, location.lon)
+                    }
+                }
+                else {
+                    getCities()
+                }
+            } catch (error: Exception) {
+                _error.value = error
+            }
+        }
+    }
+
     private companion object {
         private const val DEFAULT_LAT = 49.0
         private const val DEFAULT_LON = 11.5
