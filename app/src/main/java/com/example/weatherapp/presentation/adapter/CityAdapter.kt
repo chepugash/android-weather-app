@@ -1,25 +1,25 @@
-package com.example.weatherapp.adapter
+package com.example.weatherapp.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.data.response.City
+import com.example.weatherapp.data.weather.datasource.remote.response.City
 import com.example.weatherapp.databinding.ItemCityBinding
+import com.example.weatherapp.domain.entity.CityInfo
 
 class CityAdapter(
-    private val list: List<City>,
     private val action: (Int) -> Unit
-) : ListAdapter<City, RecyclerView.ViewHolder>(object: DiffUtil.ItemCallback<City>() {
+) : ListAdapter<CityInfo, RecyclerView.ViewHolder>(object: DiffUtil.ItemCallback<CityInfo>() {
     override fun areItemsTheSame(
-        oldItem: City,
-        newItem: City
+        oldItem: CityInfo,
+        newItem: CityInfo
     ): Boolean = oldItem.id == newItem.id
 
     override fun areContentsTheSame(
-        oldItem: City,
-        newItem: City
+        oldItem: CityInfo,
+        newItem: CityInfo
     ): Boolean = oldItem == newItem
 }) {
 
@@ -39,8 +39,8 @@ class CityAdapter(
         holder: RecyclerView.ViewHolder,
         position: Int
     ) {
-        (holder as CityItem).onBind(list[position])
+        (holder as CityItem).onBind(currentList[position])
     }
 
-    override fun getItemCount(): Int = list.size
+    override fun getItemCount(): Int = currentList.size
 }
