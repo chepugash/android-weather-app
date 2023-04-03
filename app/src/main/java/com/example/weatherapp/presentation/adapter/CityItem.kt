@@ -1,9 +1,11 @@
 package com.example.weatherapp.presentation.adapter
 
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.weatherapp.R
+import com.example.weatherapp.data.weather.datasource.remote.response.City
 import com.example.weatherapp.databinding.ItemCityBinding
 import com.example.weatherapp.domain.entity.CityInfo
 
