@@ -1,7 +1,7 @@
-package com.example.weatherapp.data
+package com.example.weatherapp.data.weather.datasource.remote
 
-import com.example.weatherapp.data.response.CityResponse
-import com.example.weatherapp.data.response.WeatherResponse
+import com.example.weatherapp.data.weather.datasource.remote.response.CityResponse
+import com.example.weatherapp.data.weather.datasource.remote.response.WeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

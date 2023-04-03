@@ -1,36 +1,27 @@
-package com.example.weatherapp.adapter
+package com.example.weatherapp.presentation.adapter
 
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.weatherapp.R
-import com.example.weatherapp.data.response.City
+import com.example.weatherapp.data.weather.datasource.remote.response.City
 import com.example.weatherapp.databinding.ItemCityBinding
-
-private const val TEMP_M_20 = -20.0
-private const val TEMP_M_15 = -15.0
-private const val TEMP_M_10 = -10.0
-private const val TEMP_M_5 = -5.0
-private const val TEMP_0 = 0.0
-private const val TEMP_5 = 5.0
-private const val TEMP_10 = 10.0
-private const val TEMP_15 = 15.0
-private const val TEMP_20 = 20.0
+import com.example.weatherapp.domain.entity.CityInfo
 
 class CityItem(
     private val binding: ItemCityBinding,
     private val action: (Int) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun onBind(city: City) {
+    fun onBind(city: CityInfo) {
         with(binding) {
             tvName.text = city.name
-            tvTemp.text = city.main.temp.toString()
+            tvTemp.text = city.temperature.toString()
             tvTemp.setTextColor(
-                ContextCompat.getColor(tvTemp.context, getColor(city.main.temp))
+                ContextCompat.getColor(tvTemp.context, getColor(city.temperature))
             )
-            ivIcon.load("https://openweathermap.org/img/w/${city.weather.firstOrNull()?.icon}.png") {
+            ivIcon.load("https://openweathermap.org/img/w/${city.icon}.png") {
                 crossfade(true)
             }
             root.setOnClickListener {
@@ -51,5 +42,17 @@ class CityItem(
             in TEMP_15..TEMP_20 -> R.color.amber_900
             else -> R.color.grey_700
         }
+    }
+
+    companion object {
+        private const val TEMP_M_20 = -20.0
+        private const val TEMP_M_15 = -15.0
+        private const val TEMP_M_10 = -10.0
+        private const val TEMP_M_5 = -5.0
+        private const val TEMP_0 = 0.0
+        private const val TEMP_5 = 5.0
+        private const val TEMP_10 = 10.0
+        private const val TEMP_15 = 15.0
+        private const val TEMP_20 = 20.0
     }
 }

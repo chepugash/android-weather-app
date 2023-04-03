@@ -1,10 +1,10 @@
-package com.example.weatherapp.adapter
+package com.example.weatherapp.presentation.adapter
 
 import android.graphics.Rect
 import android.util.TypedValue
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.ui.MainFragment
+import com.example.weatherapp.presentation.fragment.MainFragment
 
 class SpaceItemDecorator(
     private val context: MainFragment,
