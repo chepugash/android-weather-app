@@ -7,16 +7,32 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
+import com.example.weatherapp.App
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentDetailBinding
+import com.example.weatherapp.domain.usecase.GetWeatherByIdUseCase
 import com.example.weatherapp.presentation.fragment.viewmodel.DetailViewModel
 import com.example.weatherapp.utils.showSnackbar
 import timber.log.Timber
+import javax.inject.Inject
 
 class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private var binding: FragmentDetailBinding? = null
-    private val viewModel: DetailViewModel by viewModels()
+
+    @Inject
+    lateinit var getWeatherByIdUseCase: GetWeatherByIdUseCase
+
+    private val viewModel: DetailViewModel by viewModels {
+        DetailViewModel.provideFactory(
+            getWeatherByIdUseCase
+        )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        App.appComponent.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
