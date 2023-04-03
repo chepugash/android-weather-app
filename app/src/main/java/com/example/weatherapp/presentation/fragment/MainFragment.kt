@@ -2,7 +2,6 @@ package com.example.weatherapp.presentation.fragment
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,21 +10,38 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.weatherapp.App
 import com.example.weatherapp.R
 import com.example.weatherapp.presentation.adapter.CityAdapter
 import com.example.weatherapp.presentation.adapter.SpaceItemDecorator
 import com.example.weatherapp.databinding.FragmentMainBinding
-import com.example.weatherapp.di.DataContainer.provideGeoLocationProviderClient
+import com.example.weatherapp.domain.usecase.GetCitiesUseCase
+import com.example.weatherapp.domain.usecase.GetGeoLocationUseCase
+import com.example.weatherapp.domain.usecase.GetWeatherByNameUseCase
 import com.example.weatherapp.presentation.fragment.viewmodel.MainViewModel
 import com.example.weatherapp.utils.showSnackbar
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import javax.inject.Inject
 
 class MainFragment : Fragment(R.layout.fragment_main) {
 
     private var binding: FragmentMainBinding? = null
-    private lateinit var mFusedLocationClient: FusedLocationProviderClient
-    private val viewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var getCitiesUseCase: GetCitiesUseCase
+
+    @Inject
+    lateinit var getWeatherByNameUseCase: GetWeatherByNameUseCase
+
+    @Inject
+    lateinit var getGeoLocationUseCase: GetGeoLocationUseCase
+
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModel.provideFactory(
+            getGeoLocationUseCase,
+            getWeatherByNameUseCase,
+            getCitiesUseCase
+        )
+    }
 
     private val adapter: CityAdapter by lazy(LazyThreadSafetyMode.NONE) {
         CityAdapter {
@@ -76,6 +92,11 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         })
 
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        App.appComponent.inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(

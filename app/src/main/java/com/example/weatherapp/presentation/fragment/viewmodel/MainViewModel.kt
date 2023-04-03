@@ -1,27 +1,25 @@
 package com.example.weatherapp.presentation.fragment.viewmodel
 
-import android.annotation.SuppressLint
-import android.location.Location
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.di.DataContainer.citiesUseCase
-import com.example.weatherapp.di.DataContainer.geoLocationUseCase
-import com.example.weatherapp.di.DataContainer.weatherByNameUseCase
+import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.weatherapp.domain.entity.CityInfo
 import com.example.weatherapp.domain.entity.WeatherInfo
+import com.example.weatherapp.domain.usecase.GetCitiesUseCase
+import com.example.weatherapp.domain.usecase.GetGeoLocationUseCase
+import com.example.weatherapp.domain.usecase.GetWeatherByNameUseCase
 import com.example.weatherapp.utils.SingleLiveEvent
-import com.google.android.gms.location.FusedLocationProviderClient
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
-
-    private val getWeatherByNameUseCase = weatherByNameUseCase
-
-    private val getCitiesUseCase = citiesUseCase
+class MainViewModel(
+    geoLocationUseCase: GetGeoLocationUseCase,
+    weatherByNameUseCase: GetWeatherByNameUseCase,
+    citiesUseCase: GetCitiesUseCase
+) : ViewModel() {
 
     private val getGeoLocationUseCase = geoLocationUseCase
+    private val getWeatherByNameUseCase = weatherByNameUseCase
+    private val getCitiesUseCase = citiesUseCase
 
     private val _weatherInfo = SingleLiveEvent<WeatherInfo?>()
     val weatherInfo: SingleLiveEvent<WeatherInfo?>
@@ -75,21 +73,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    @SuppressLint("MissingPermission")
-    fun loadNearestCities(mFusedLocationClient: FusedLocationProviderClient ?= null) {
-        if (mFusedLocationClient == null) {
-            getCities()
-        } else {
-            mFusedLocationClient.lastLocation.addOnSuccessListener { loc: Location? ->
-                if (loc != null) {
-                    getCities(loc.latitude, loc.longitude)
-                } else {
-                    getCities()
-                }
-            }
-        }
-    }
-
     fun loadNearestCities(isGranted: Boolean) {
         viewModelScope.launch {
             try {
@@ -110,10 +93,22 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private companion object {
+    companion object {
         private const val DEFAULT_LAT = 49.0
         private const val DEFAULT_LON = 11.5
         private const val CNT = 10
+
+        fun provideFactory(
+            geoLocationUseCase: GetGeoLocationUseCase,
+            weatherByNameUseCase: GetWeatherByNameUseCase,
+            citiesUseCase: GetCitiesUseCase
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                // Create a SavedStateHandle for this ViewModel from extras
+//                val savedStateHandle = extras.createSavedStateHandle()
+                MainViewModel(geoLocationUseCase, weatherByNameUseCase, citiesUseCase)
+            }
+        }
     }
 
 }

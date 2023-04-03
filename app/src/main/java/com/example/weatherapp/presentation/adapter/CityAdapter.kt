@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.data.weather.datasource.remote.response.City
 import com.example.weatherapp.databinding.ItemCityBinding
 import com.example.weatherapp.domain.entity.CityInfo
 
