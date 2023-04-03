@@ -1,15 +1,15 @@
 package com.example.weatherapp.presentation.fragment.viewmodel
 
-import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.di.DataContainer.weatherByIdUseCase
 import com.example.weatherapp.domain.entity.WeatherInfo
 import com.example.weatherapp.domain.usecase.GetWeatherByIdUseCase
 import kotlinx.coroutines.launch
 
-class DetailViewModel(
-    weatherByIdUseCase: GetWeatherByIdUseCase
-) : ViewModel() {
+class DetailViewModel : ViewModel() {
 
     private val getWeatherByIdUseCase = weatherByIdUseCase
 
@@ -36,18 +36,6 @@ class DetailViewModel(
                 _error.value = error
             } finally {
                 _loading.value = false
-            }
-        }
-    }
-
-    companion object {
-        fun provideFactory(
-            weatherByIdUseCase: GetWeatherByIdUseCase,
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                // Create a SavedStateHandle for this ViewModel from extras
-//                val savedStateHandle = extras.createSavedStateHandle()
-                DetailViewModel(weatherByIdUseCase)
             }
         }
     }
