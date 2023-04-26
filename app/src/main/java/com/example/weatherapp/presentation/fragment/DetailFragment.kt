@@ -13,39 +13,35 @@ import com.example.weatherapp.databinding.FragmentDetailBinding
 import com.example.weatherapp.domain.usecase.GetWeatherByIdUseCase
 import com.example.weatherapp.presentation.fragment.viewmodel.DetailViewModel
 import com.example.weatherapp.utils.showSnackbar
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private var binding: FragmentDetailBinding? = null
 
-    @Inject
-    lateinit var getWeatherByIdUseCase: GetWeatherByIdUseCase
-
-    private val viewModel: DetailViewModel by viewModels {
-        DetailViewModel.provideFactory(
-            getWeatherByIdUseCase
-        )
+    private val cityId by lazy {
+        arguments?.getInt(ARG_NAME) ?: 0
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        App.appComponent.inject(this)
-        super.onCreate(savedInstanceState)
+    @Inject
+    lateinit var viewModelFactory: DetailViewModel.DetailViewModelFactory
+
+    private val viewModel: DetailViewModel by viewModels {
+        DetailViewModel.provideFactory(viewModelFactory, cityId)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentDetailBinding.bind(view)
         observeViewModel()
+
         (activity as AppCompatActivity?)?.supportActionBar?.title = ""
 
-        val id = arguments?.getInt(ARG_NAME)
-
         binding?.run {
-            if (id != null) {
-                viewModel.getWeather(id)
-            }
+            viewModel.getWeather()
         }
     }
 

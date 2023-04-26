@@ -1,17 +1,17 @@
 package com.example.weatherapp.presentation.fragment.viewmodel
 
 import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.weatherapp.domain.entity.WeatherInfo
 import com.example.weatherapp.domain.usecase.GetWeatherByIdUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-class DetailViewModel(
-    weatherByIdUseCase: GetWeatherByIdUseCase
+class DetailViewModel @AssistedInject constructor(
+    private val weatherByIdUseCase: GetWeatherByIdUseCase,
+    @Assisted private val cityId: Int
 ) : ViewModel() {
-
-    private val getWeatherByIdUseCase = weatherByIdUseCase
 
     private val _weatherInfo = MutableLiveData<WeatherInfo?>(null)
     val weatherInfo: LiveData<WeatherInfo?>
@@ -25,11 +25,11 @@ class DetailViewModel(
     val loading: LiveData<Boolean>
         get() = _loading
 
-    fun getWeather(id: Int) {
+    fun getWeather() {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                getWeatherByIdUseCase(id).also { weatherInfo ->
+                weatherByIdUseCase(cityId).also { weatherInfo ->
                     _weatherInfo.value = weatherInfo
                 }
             } catch (error: Throwable) {
@@ -40,15 +40,19 @@ class DetailViewModel(
         }
     }
 
+    @AssistedFactory
+    interface DetailViewModelFactory {
+        fun create(cityId: Int): DetailViewModel
+    }
+
     companion object {
         fun provideFactory(
-            weatherByIdUseCase: GetWeatherByIdUseCase,
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                // Create a SavedStateHandle for this ViewModel from extras
-//                val savedStateHandle = extras.createSavedStateHandle()
-                DetailViewModel(weatherByIdUseCase)
-            }
+            assistedFactory: DetailViewModelFactory,
+            cityId: Int
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T: ViewModel> create(modelClass: Class<T>): T =
+                assistedFactory.create(cityId) as T
         }
     }
 }

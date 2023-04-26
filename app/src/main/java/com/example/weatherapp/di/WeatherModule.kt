@@ -8,8 +8,11 @@ import com.example.weatherapp.domain.usecase.GetWeatherByIdUseCase
 import com.example.weatherapp.domain.usecase.GetWeatherByNameUseCase
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
 @Module
+@InstallIn(SingletonComponent::class)
 class WeatherModule {
 
     @Provides
