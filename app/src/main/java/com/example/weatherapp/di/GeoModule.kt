@@ -7,8 +7,11 @@ import com.example.weatherapp.domain.usecase.GetGeoLocationUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
 @Module
+@InstallIn(SingletonComponent::class)
 class GeoModule {
 
     @Provides

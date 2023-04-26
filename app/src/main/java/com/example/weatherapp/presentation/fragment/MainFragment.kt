@@ -20,8 +20,10 @@ import com.example.weatherapp.domain.usecase.GetGeoLocationUseCase
 import com.example.weatherapp.domain.usecase.GetWeatherByNameUseCase
 import com.example.weatherapp.presentation.fragment.viewmodel.MainViewModel
 import com.example.weatherapp.utils.showSnackbar
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
 
     private var binding: FragmentMainBinding? = null
@@ -92,11 +94,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         })
 
         super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        App.appComponent.inject(this)
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(

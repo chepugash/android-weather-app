@@ -9,17 +9,16 @@ import com.example.weatherapp.domain.usecase.GetCitiesUseCase
 import com.example.weatherapp.domain.usecase.GetGeoLocationUseCase
 import com.example.weatherapp.domain.usecase.GetWeatherByNameUseCase
 import com.example.weatherapp.utils.SingleLiveEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(
-    geoLocationUseCase: GetGeoLocationUseCase,
-    weatherByNameUseCase: GetWeatherByNameUseCase,
-    citiesUseCase: GetCitiesUseCase
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val geoLocationUseCase: GetGeoLocationUseCase,
+    private val weatherByNameUseCase: GetWeatherByNameUseCase,
+    private val citiesUseCase: GetCitiesUseCase
 ) : ViewModel() {
-
-    private val getGeoLocationUseCase = geoLocationUseCase
-    private val getWeatherByNameUseCase = weatherByNameUseCase
-    private val getCitiesUseCase = citiesUseCase
 
     private val _weatherInfo = SingleLiveEvent<WeatherInfo?>()
     val weatherInfo: SingleLiveEvent<WeatherInfo?>
@@ -46,7 +45,7 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 _loading.value = true
-                getWeatherByNameUseCase(name).also { weatherInfo ->
+                weatherByNameUseCase(name).also { weatherInfo ->
                     _weatherInfo.value = weatherInfo
                     _navigateToDetails.value = weatherInfo.id
                 }
@@ -62,7 +61,7 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 _loading.value = true
-                getCitiesUseCase(lat, lon, count). also { list ->
+                citiesUseCase(lat, lon, count). also { list ->
                     _cityList.value = list
                 }
             } catch (error: Throwable) {
@@ -77,7 +76,7 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 if (isGranted) {
-                    val location = getGeoLocationUseCase()
+                    val location = geoLocationUseCase()
                     if (location == null) {
                         getCities()
                     } else {
