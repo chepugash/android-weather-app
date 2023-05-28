@@ -1,6 +1,5 @@
 package com.example.weatherapp.adapter
 
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -8,17 +7,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.data.response.City
 import com.example.weatherapp.databinding.ItemCityBinding
 
-private const val TEMP_M_20 = -20.0
-private const val TEMP_M_15 = -15.0
-private const val TEMP_M_10 = -10.0
-private const val TEMP_M_5 = -5.0
-private const val TEMP_0 = 0.0
-private const val TEMP_5 = 5.0
-private const val TEMP_10 = 10.0
-private const val TEMP_15 = 15.0
-private const val TEMP_20 = 20.0
-
-class CityItem(
+class CityItemViewHolder(
     private val binding: ItemCityBinding,
     private val action: (Int) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -51,5 +40,17 @@ class CityItem(
             in TEMP_15..TEMP_20 -> R.color.amber_900
             else -> R.color.grey_700
         }
+    }
+
+    companion object {
+        private const val TEMP_M_20 = -20.0
+        private const val TEMP_M_15 = -15.0
+        private const val TEMP_M_10 = -10.0
+        private const val TEMP_M_5 = -5.0
+        private const val TEMP_0 = 0.0
+        private const val TEMP_5 = 5.0
+        private const val TEMP_10 = 10.0
+        private const val TEMP_15 = 15.0
+        private const val TEMP_20 = 20.0
     }
 }

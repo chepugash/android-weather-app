@@ -26,7 +26,7 @@ class CityAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): CityItem = CityItem(
+    ): CityItemViewHolder = CityItemViewHolder(
         binding = ItemCityBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
@@ -39,7 +39,7 @@ class CityAdapter(
         holder: RecyclerView.ViewHolder,
         position: Int
     ) {
-        (holder as CityItem).onBind(list[position])
+        (holder as CityItemViewHolder).onBind(list[position])
     }
 
     override fun getItemCount(): Int = list.size
